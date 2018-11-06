@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bigfong.mybatis.one2many.mapper.DepartmentMapper">
+	<resultMap type="Department" id="BaseResultMap">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		
+		<!-- 针对单一对象的属性，使用association  -->
+		<!-- 针对集合类型的属性，使用collection，这里:List<Employee> emps -->
+		<!-- 
+			ofType:表示集合中泛型的类型
+		 -->
+		<collection property="emps"
+		ofType="Employee"
+		select="com.bigfong.mybatis.one2many.mapper.EmployeeMapper.selectByDeptId"
+		column="id"
+		/>
+
+	</resultMap>
+	
+	<resultMap type="Department" id="BaseResultMap2">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		
+		<!-- 针对单一对象的属性，使用association  -->
+		<!-- 针对集合类型的属性，使用collection，这里:List<Employee> emps 
+		<collection property="emps"
+		ofType="Employee"
+		select="com.bigfong.mybatis.one2many.mapper.EmployeeMapper.selectByDeptId"
+		column="id"
+		/>-->
+		<collection property="emps" ofType="Employee">
+			<id column="e_id" property="id"/>
+			<result column="e_name" property="name"/>
+			<result column="id" property="deptId"/>
+		</collection>
+
+	</resultMap>
+	
+	
+	
+	<!-- 查询 -->
+	<select id="get" resultMap="BaseResultMap">
+		SELECT id,name FROM department WHERE id = #{id}
+	</select>
+	
+	<!-- 查询 -->
+	<select id="get2" resultMap="BaseResultMap2">
+		SELECT d.id,d.name,e.id as e_id,e.name as e_name FROM department d join employee_new e on d.id=e.dept_id		
+		 WHERE d.id = #{id}
+	</select>
+	
+	<!-- 添加  -->
+	<insert id="save" useGeneratedKeys="true" keyProperty="id" >
+		insert into  department (name) values (#{name})
+	</insert>
+	
+</mapper>

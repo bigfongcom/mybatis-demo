@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bigfong.mybatis.domain.UserMapper">
+	<!-- resultMap:结果集和对象的映射，解决结果集（表）中的列和对象中的属性名称不一致问题
+				id属性:当前resultMap文件中的resultMap的唯一名称
+				type属性:把结果集中的每一行数据封装成什么类型的对象
+	 -->
+	<resultMap id="BaseResultMap" type="User" >
+		<!-- 功能和result一样，如果是主键建议使用id元素，提升性能 -->
+		<id column="id" property="id"/>
+		<!-- 匹配 对象中的哪一个属性对应表中的哪一个列-->
+		<result column="name" property="name"/>
+		<result column="salary" property="salary"/>
+	</resultMap>
+	
+	<!-- 添加 
+		useGeneratedKeys:是否需要返回自动生成的主键
+		keyProperty:把自动生成的主键设置到对像的哪一个属性上
+	-->
+	<insert id="save" useGeneratedKeys="true" keyProperty="id" >
+		insert into  t_user (name,salary) values (#{name},#{salary})
+	</insert>
+	<!-- 
+		select元素:专门用来做查询的SQL,
+		   id:唯一标识，用来表示某条SQL语句,id属性和namespace唯一的表示了应用中的某条SQL语句
+		   parameterType:表示执行该SQL语句需要的参数的类型，建议不写，MyBatis可以自行推断出来
+		   resultType：把结果集中的每一条数据封装成什么类型的对象
+		parameterType="User",使用全局配置中设置的别名   
+	 -->
+	<select id="get"  resultMap="BaseResultMap">
+		select id,name,salary from t_user where id = #{id}
+	</select>
+	<!-- 获取总数 -->
+	<select id="queryForCount"  resultType="int">
+		select count(*) from t_user
+	</select>
+	
+	<select id="listAll" resultMap="BaseResultMap">
+		select id,name,salary from t_user
+	</select>
+	<!-- 更新 -->
+	<update id="update" >
+		update t_user set name = #{name},salary = #{salary} where id = #{id}
+	</update>
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from t_user where id = #{id}
+	</delete>
+	
+	<!-- 查询部分字段 -->
+	<select id="getForMap" resultType="map">
+		select id,name from t_user where id = #{id}
+	</select>
+</mapper>

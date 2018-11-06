@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.bigfong.mybatis.many2one.mapper.EmployeeMapper">
+	<!-- 当结果集中的列名和对象的属性不匹配时，处理结果集 -->
+	<resultMap id="BaseResultMap" type="Employee" >
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<!-- 处理关联对象 -->
+		<!-- 方法一：额外SQL语句  -->
+		<!-- 方法二：内联关系 
+			<result column="d_id" property="dept.id"/>
+			<result column="d_name" property="dept.name"/>
+		 -->
+		<!-- 方法三
+			可以给association添加属性columnPrefix="d_"，下边字段可以统一少写"d_"
+		 -->
+		<association property="dept" javaType="Department" >
+			<id column="d_id" property="id"/>
+			<result column="d_name" property="name"/>
+		</association>
+	</resultMap>
+	<!-- 查找  -->
+	<select id="get" resultMap="BaseResultMap" >
+		select e.id,e.name,d.id as d_id,d.name as d_name from  employee_new e join department d on e.dept_id = d.id where e.id = #{id}
+	</select>
+	
+	<!-- 全部  -->
+	<select id="listAll" resultMap="BaseResultMap" >
+		select e.id,e.name,d.id as d_id,d.name as d_name from  employee_new e join department d on e.dept_id = d.id
+	</select>
+	
+	<!-- 添加  -->
+	<insert id="save" useGeneratedKeys="true" keyProperty="id" >
+		insert into  employee_new (name,dept_id) values (#{name},#{dept.id})
+	</insert>
+	
+	
+</mapper>
